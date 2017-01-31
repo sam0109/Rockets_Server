@@ -1,5 +1,5 @@
 class DataPacketsController < ApplicationController
-  before_action :set_data_packet, only: [:show, :edit, :update, :destroy]
+  before_action :set_data_packet, only: [:show, :update, :destroy]
 
   # GET /data_packets
   # GET /data_packets.json
@@ -15,10 +15,6 @@ class DataPacketsController < ApplicationController
   # GET /data_packets/new
   def new
     @data_packet = DataPacket.new
-  end
-
-  # GET /data_packets/1/edit
-  def edit
   end
 
   # POST /data_packets
@@ -48,16 +44,6 @@ class DataPacketsController < ApplicationController
         format.html { render :edit }
         format.json { render json: @data_packet.errors, status: :unprocessable_entity }
       end
-    end
-  end
-
-  # DELETE /data_packets/1
-  # DELETE /data_packets/1.json
-  def destroy
-    @data_packet.destroy
-    respond_to do |format|
-      format.html { redirect_to data_packets_url, notice: 'Data packet was successfully destroyed.' }
-      format.json { head :no_content }
     end
   end
 
