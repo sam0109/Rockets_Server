@@ -1,0 +1,1 @@
+json.array! @data_packets, partial: 'data_packets/data_packet', as: :data_packet

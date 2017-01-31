@@ -1,0 +1,1 @@
+json.partial! "data_packets/data_packet", data_packet: @data_packet

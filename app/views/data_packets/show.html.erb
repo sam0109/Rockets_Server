@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Timestamp:</strong>
+  <%= @data_packet.Timestamp %>
+</p>
+
+<p>
+  <strong>Data:</strong>
+  <%= @data_packet.data %>
+</p>
+
+<%= link_to 'Edit', edit_data_packet_path(@data_packet) %> |
+<%= link_to 'Back', data_packets_path %>
