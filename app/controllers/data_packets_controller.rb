@@ -1,5 +1,5 @@
 class DataPacketsController < ApplicationController
-  before_action :set_data_packet, only: [:show, :update, :destroy]
+  before_action :set_data_packet, only: [:show, :update]
 
   # GET /data_packets
   # GET /data_packets.json
