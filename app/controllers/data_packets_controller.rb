@@ -1,5 +1,5 @@
 class DataPacketsController < ApplicationController
-  before_action :set_data_packet, only: [:show, :update]
+  before_action :set_data_packet, only: [:show]
 
   # GET /data_packets
   # GET /data_packets.json
@@ -26,32 +26,11 @@ class DataPacketsController < ApplicationController
       if @data_packet.save
         format.html { redirect_to @data_packet, notice: 'Data packet was successfully created.' }
         format.json { render :show, status: :created, location: @data_packet }
+        ActionCable.server.broadcast 'data_channel', Altitude: @data_packet.Altitude, Timestamp: @data_packet.Timestamp
       else
         format.html { render :new }
         format.json { render json: @data_packet.errors, status: :unprocessable_entity }
       end
-    end
-  end
-
-  # PATCH/PUT /data_packets/1
-  # PATCH/PUT /data_packets/1.json
-  def update
-    respond_to do |format|
-      if @data_packet.update(data_packet_params)
-        format.html { redirect_to @data_packet, notice: 'Data packet was successfully updated.' }
-        format.json { render :show, status: :ok, location: @data_packet }
-      else
-        format.html { render :edit }
-        format.json { render json: @data_packet.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  def data
-    respond_to do |format|
-      format.json {
-        render :json => [1,2,3,4,5]
-      }
     end
   end
 
@@ -63,6 +42,6 @@ class DataPacketsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def data_packet_params
-      params.require(:data_packet).permit(:Timestamp, :data)
+      params.require(:data_packet).permit(:Timestamp, :Altitude)
     end
 end

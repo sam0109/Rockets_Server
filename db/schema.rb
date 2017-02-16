@@ -14,7 +14,7 @@ ActiveRecord::Schema.define(version: 20170131001000) do
 
   create_table "data_packets", force: :cascade do |t|
     t.string   "Timestamp"
-    t.string   "data"
+    t.string   "Altitude"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
