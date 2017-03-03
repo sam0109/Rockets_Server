@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170131001000) do
+ActiveRecord::Schema.define(version: 20170303040747) do
 
   create_table "data_packets", force: :cascade do |t|
-    t.string   "Timestamp"
-    t.string   "Altitude"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "sensor"
+    t.decimal  "t"
+    t.string   "data"
   end
 
 end

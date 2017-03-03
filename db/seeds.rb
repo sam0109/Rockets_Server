@@ -5,3 +5,7 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+#{"data":"WICED2", "t":1488516273228, "data":"{"ADC1":0342}"}
+
+DataPacket.create( sensor: "WICED2", t: '1488516273228', data: '{"ADC1":"0342"}' )
