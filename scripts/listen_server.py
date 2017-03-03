@@ -9,6 +9,7 @@ import os
 import time
 import threading
 from Queue import Queue
+import urllib.request
 
 q = Queue()
 alive = True
@@ -16,10 +17,15 @@ alive = True
 def worker():
     conn = sqlite3.connect('../db/development.sqlite3')
     cur = conn.cursor()
+    startTime = int(round(time.time() * 1000))
     while alive:
         item = q.get()
         cur.execute(item)
-        conn.commit()
+
+        if (int(round(time.time() * 1000)) - startTime == 100):
+            conn.commit()
+            startTime = int(round(time.time() * 1000))
+
     conn.close()
 
 
