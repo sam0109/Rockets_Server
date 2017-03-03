@@ -11,18 +11,21 @@ import threading
 from Queue import Queue
 
 q = Queue()
+alive = True
 class sqlThread(threading.Thread):
 
-    def __init__(self, conn, cur):
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.conn = conn
-        self.cur = cur
+        self.conn =  sqlite3.connect('../db/development.sqlite3')
+        self.cur = self.conn.cursor()
+
 
     def run(self):
-        while True:
+        while alive:
             item = q.get()
             self.cur.execute(item)
             self.conn.commit()
+        self.conn.close()
 
 
 UDP_IP = '0.0.0.0'            # Connect to any address
@@ -32,10 +35,9 @@ DB_DELAY = 0.01               # Seconds between DB writes
 
 def main():
   #Initialize DB connection
-  print("Connecting to DB...")
-  conn = sqlite3.connect('../db/development.sqlite3')
-  c = conn.cursor()
-  sqlTh = sqlThread(conn, c)
+  #print("Connecting to DB...")
+
+  sqlTh = sqlThread()
   sqlTh.daemon = True
   sqlTh.start()
   print("DB connected")
@@ -60,15 +62,18 @@ def main():
     q.put("INSERT INTO data_packets (created_at, updated_at, sensor, t, data) VALUES('" + timestring + "','" + timestring + "','" + data_dict['id'] + "'," + str(data_dict['t']) + ",'" + sensor_reading + "')")
     time2 = time.time()
     print('insertion took %0.3f ms' % ((time2-time1)*1000.0))
-
+  alive = False
+  sqlTh.join()
   print("Something bad happened (invalid data? Lost db connection?)")
-  conn.close()
+
 
 if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
         print 'Interrupted'
+        alive = False
+        #sqlTh.join()
         try:
             sys.exit(0)
         except SystemExit:
