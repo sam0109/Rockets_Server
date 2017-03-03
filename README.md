@@ -1,8 +1,6 @@
 # README
 
-To start the server:
-
-(It's helpful to do each of these steps in a different terminal window)
+To start the server (It's helpful to do each of these steps in a different terminal window):
 
 Start Redis with "redis-server"
 
