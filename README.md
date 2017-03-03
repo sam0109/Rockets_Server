@@ -1,24 +1,11 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+To start the server:
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+(It's helpful to do each of these steps in a different terminal window)
+Start Redis with "redis-server"
+Start Sidekiq with "bundle exec sidekiq"
+Start Rails with "rails s"
+Start the liseneing server with "scripts/listen_sever.py"
+...?
+Profit!
