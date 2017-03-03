@@ -9,7 +9,9 @@ class DataPacketsController < ApplicationController
 
   # ghetto way of triggering an update from the python server
   def show
-    @data_packets = DataPacket.where("created_at >= ?", Time.zone.now.beginning_of_day)
-    ActionCable.server.broadcast 'data_channel', Altitude: @data_packet.Altitude, Timestamp: @data_packet.Timestamp
+    data_packets = DataPacket.where("created_at >= ?", Rails.application.config.most_recent_timestamp)
+    puts data_packets
+    ActionCable.server.broadcast 'data_channel', data: data_packets
+    Rails.application.config.most_recent_timestamp = Time.current
   end
 end

@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import sqlite3
 import socket
 import json
@@ -8,8 +6,8 @@ import sys
 import os
 import time
 from threading import Thread
-from Queue import Queue
-#import urllib.request
+from queue import Queue
+import urllib.request
 
 q = Queue()
 alive = True
@@ -23,6 +21,7 @@ def worker():
         item = q.get()
         cur.execute(item)
         if (int(round(time.time() * 1000)) - startTime >= 100):
+            urllib.request.urlopen('http://127.0.0.1:3000/show')
             conn.commit()
             startTime = int(round(time.time() * 1000))
 
@@ -53,7 +52,8 @@ def main():
     data, addr = sock.recvfrom(MAX_BUFFER)
     print("Recieved: " + str(data) + " From: " + str(addr))
     #parse the json
-    data_dict = json.loads(data)
+    print(str(data))
+    data_dict = json.loads(str(data)[2:-1])
     sensor_reading = json.dumps(data_dict['data'], separators=(',',':'))
     #get the time
     timestring = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        print 'Interrupted'
+        print('Interrupted')
         alive = False
         #sqlTh.join()
         try:
