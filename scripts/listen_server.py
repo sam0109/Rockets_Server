@@ -12,20 +12,15 @@ from Queue import Queue
 
 q = Queue()
 alive = True
-class sqlThread(threading.Thread):
 
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self.conn =  sqlite3.connect('../db/development.sqlite3')
-        self.cur = self.conn.cursor()
-
-
-    def run(self):
-        while alive:
-            item = q.get()
-            self.cur.execute(item)
-            self.conn.commit()
-        self.conn.close()
+def worker():
+    conn = sqlite3.connect('../db/development.sqlite3')
+    cur = conn.cursor()
+    while alive:
+        item = q.get()
+        cur.execute(item)
+        conn.commit()
+    conn.close()
 
 
 UDP_IP = '0.0.0.0'            # Connect to any address
@@ -37,7 +32,7 @@ def main():
   #Initialize DB connection
   #print("Connecting to DB...")
 
-  sqlTh = sqlThread()
+  sqlTh = threading.Thread(target=worker)
   sqlTh.daemon = True
   sqlTh.start()
   print("DB connected")
