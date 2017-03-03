@@ -1,2 +1,3 @@
 class DataPacket < ApplicationRecord
+  
 end

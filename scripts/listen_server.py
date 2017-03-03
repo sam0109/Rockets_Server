@@ -7,12 +7,13 @@ import datetime
 import sys
 import os
 import time
-import threading
+from threading import Thread
 from Queue import Queue
-import urllib.request
+#import urllib.request
 
 q = Queue()
 alive = True
+
 
 def worker():
     conn = sqlite3.connect('../db/development.sqlite3')
@@ -21,8 +22,7 @@ def worker():
     while alive:
         item = q.get()
         cur.execute(item)
-
-        if (int(round(time.time() * 1000)) - startTime == 100):
+        if (int(round(time.time() * 1000)) - startTime >= 100):
             conn.commit()
             startTime = int(round(time.time() * 1000))
 
@@ -34,11 +34,12 @@ UDP_PORT = 8888               # Arbitrary non-privileged port
 MAX_BUFFER = 1024             # maximum size (in bytes) of the message
 DB_DELAY = 0.01               # Seconds between DB writes
 
+
 def main():
   #Initialize DB connection
-  #print("Connecting to DB...")
+  print("Connecting to DB...")
 
-  sqlTh = threading.Thread(target=worker)
+  sqlTh = Thread(target=worker)
   sqlTh.daemon = True
   sqlTh.start()
   print("DB connected")
@@ -51,18 +52,13 @@ def main():
   while True:
     data, addr = sock.recvfrom(MAX_BUFFER)
     print("Recieved: " + str(data) + " From: " + str(addr))
-    time1 = time.time()
     #parse the json
     data_dict = json.loads(data)
     sensor_reading = json.dumps(data_dict['data'], separators=(',',':'))
     #get the time
     timestring = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-    #insert the data into the DB and save it
-    #c.execute("INSERT INTO data_packets (created_at, updated_at, sensor, t, data) VALUES('" + timestring + "','" + timestring + "','" + data_dict['id'] + "'," + str(data_dict['t']) + ",'" + sensor_reading + "')")
-    #conn.commit()
     q.put("INSERT INTO data_packets (created_at, updated_at, sensor, t, data) VALUES('" + timestring + "','" + timestring + "','" + data_dict['id'] + "'," + str(data_dict['t']) + ",'" + sensor_reading + "')")
-    time2 = time.time()
-    print('insertion took %0.3f ms' % ((time2-time1)*1000.0))
+
   alive = False
   sqlTh.join()
   print("Something bad happened (invalid data? Lost db connection?)")
