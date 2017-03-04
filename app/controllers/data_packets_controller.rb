@@ -9,9 +9,11 @@ class DataPacketsController < ApplicationController
 
   # ghetto way of triggering an update from the python server
   def show
-    data_packets = DataPacket.where("created_at >= ?", Rails.application.config.most_recent_timestamp)
-    puts data_packets
-    ActionCable.server.broadcast 'data_channel', data: data_packets
-    Rails.application.config.most_recent_timestamp = Time.current
+    data_packets = DataPacket.where("created_at > ?", Rails.application.config.most_recent_timestamp).order('created_at ASC')
+    data_packets.each do |packet|
+      ActionCable.server.broadcast 'data_channel', { id: packet.sensor, t: packet.t, data: packet.data }
+      Rails.application.config.most_recent_timestamp = packet.created_at
+    end
+
   end
 end

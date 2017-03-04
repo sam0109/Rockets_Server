@@ -56,7 +56,7 @@ def main():
     data_dict = json.loads(str(data)[2:-1])
     sensor_reading = json.dumps(data_dict['data'], separators=(',',':'))
     #get the time
-    timestring = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+    timestring = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')
     q.put("INSERT INTO data_packets (created_at, updated_at, sensor, t, data) VALUES('" + timestring + "','" + timestring + "','" + data_dict['id'] + "'," + str(data_dict['t']) + ",'" + sensor_reading + "')")
 
   alive = False

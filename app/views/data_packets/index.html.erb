@@ -1,15 +1,8 @@
+
+
+<div id="lineChart" class="epoch category10" style="height: 200px;"></div>
+
 <script type="text/javascript">
-  var margin = {top: 40, right: 340, bottom: 40, left: 200},
-      width = 960 - margin.left - margin.right,
-      height = 500 - margin.top - margin.bottom;
-
-  var x = d3.scaleLinear()
-                  .domain([0, 100])
-                  .range([0, width]);
-
-  var y = d3.scaleLinear()
-                  .domain([0, 100])
-                  .range([height, 0]);
 
   App.data = App.cable.subscriptions.create("DataChannel", {
     connected: function() {},
@@ -17,55 +10,24 @@
     received: plotPoint
   });
 
-  window.onload = function() {
-    var data = $('.temp_information').data('temp')
-    for (i = 0; i < data.length; i++) { 
-      plotPoint(data[i])
+  var lineChartData = [
+  // First series
+    {
+      label: "Series 1",
+      values: []
     }
-  }
+  ]
+
+  var lineChartInstance = $('#lineChart').epoch({
+    type: 'time.line',
+    axes: ['left', 'right', 'bottom'],
+    data: lineChartData
+  });
 
   function plotPoint(data) {
-    svg.append("circle")
-          .attr("r", 2.5)
-          .attr("cx", x(data['Timestamp']))
-          .attr("cy", y(data['Altitude']));
+    console.log(data['t'])
+    //data = JSON.parse(data['data'])
+    lineChartInstance.push([{time: data['t'] / 1000, y: Math.sin(data['t'] / 1000), label: "Series 1"}]);
   }
 
-  //Create SVG element
-  var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-  svg.append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom()
-        .scale(x))
-      .append("text")
-        .attr("x", width)
-        .attr("y", -3)
-        .attr("dy", "-.35em")
-        .style("font-weight", "bold")
-        .style("fill", "black")
-        .style("text-anchor", "middle")
-        .text("time");
-
-  svg.append("g")
-    .attr("class", "axis axis--y")
-    .call(d3.axisLeft()
-      .scale(y))
-    .append("text")
-      .attr("x", 6)
-      .style("text-anchor", "start")
-      .attr("dy", ".35em")
-      .style("font-weight", "bold")
-      .style("fill", "black")
-      .text("Altitude");
 </script>
-
-<p id="notice"><%= notice %></p>
-
-<%= content_tag :div, class: "temp_information", data: {temp: @data_packets} do %>
-<% end %>
