@@ -7,7 +7,7 @@ import os
 import time
 from threading import Thread
 from queue import Queue
-import urllib.request
+#import urllib.request
 
 q = Queue()
 alive = True
@@ -21,7 +21,7 @@ def worker():
         item = q.get()
         cur.execute(item)
         if (int(round(time.time() * 1000)) - startTime >= 100):
-            urllib.request.urlopen('http://127.0.0.1:3000/show')
+            #urllib.request.urlopen('http://127.0.0.1:3000/show')
             conn.commit()
             startTime = int(round(time.time() * 1000))
 
