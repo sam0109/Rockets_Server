@@ -1,3 +1,0 @@
-class DataPacket < ApplicationRecord
-  
-end
