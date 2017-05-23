@@ -5,12 +5,13 @@ var paths = [];
 var cols = [];
 var readyForData = false;
 var table = $("#graph").attr("table");
-
 var duration = 10000;
 var margins = {top: 20, right: 20, bottom: 30, left: 50}
 var bb = document.querySelector('#graph').getBoundingClientRect();
 var width = bb.right - bb.left;
 var height = 500;
+var offset = 0;
+var scale = 1;
 
 var svg = d3.select('#graph')
   .append('svg')
@@ -44,7 +45,7 @@ var lineFunc = d3.line()
     return x(timestamps[i]);
   })
   .y(function(d) {
-    return y(d);
+    return y((d * scale) + offset);
   });
 
 var ordinal = null;
@@ -57,23 +58,18 @@ var legend = null;
 
 var last_retrieved = null;
 
-
-function update_duration() {
-    var input = document.getElementById("userInputDuration").value;
-    var new_duration = parseInt(input);
-    if(new_duration){
-      duration = new_duration * 1000
-    }
-    else{
-      alert("Not a valid duration");
-    }
-}
+$('#update_values').on('click', function (event) {
+    duration = parseInt(document.getElementById("input_duration").value) * 1000;
+    offset = parseFloat(document.getElementById("input_offset").value);
+    scale = parseFloat(document.getElementById("input_scale").value);
+});
 
 function update_graph(){
   time = (new Date).getTime();
   x.domain([time - duration, time]);  //TODO: ease instead of constantly redrawing to improve performance
   var flat_data = [].concat.apply([], data);
-  y.domain(d3.extent(flat_data, function(d) { return Math.max(d); }));
+  var dom = d3.extent(flat_data).map(function (d) { return (d * scale) + offset });
+  y.domain(dom);
 
   xAxis.call(d3.axisBottom(x));
   yAxis.call(d3.axisLeft(y));
