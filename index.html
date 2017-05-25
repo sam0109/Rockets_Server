@@ -18,6 +18,17 @@
       body {
         padding-top: 80px;
       }
+      .btn-toggle {
+        color: white;
+        outline: none;
+      }
+      .btn.active {
+        background-color: grey !important;
+      }
+      .btn.active, .btn:active:focus, .btn.active:focus, .btn:hover, .btn:focus {
+        outline: none;
+        color: white;
+      }
     </style>
 
     <!-- d3 -->
@@ -35,41 +46,33 @@
     </nav>
 
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-12 center-block">
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <div id="graph" table="thermocouple"></div>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div id="graph" table="thermocouple"></div>
+        </div>
+        <div class="panel-footer" id="line_info">
+          <div class="row">
+            <div class="col-md-3 col-md-offset-1">
+              <div class="input-group">
+                <span class="input-group-addon">Window: </span>
+                <input id="input_duration" type="text" class="form-control" value="10">
+                <span class="input-group-addon">s</span>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="input-group">
+                <span class="input-group-addon">Time Delay: </span>
+                <input id="input_time_delay" type="text" class="form-control" value="0">
+                <span class="input-group-addon">s</span>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button id="update_values" type="button" class="btn btn-default">Update</button>
             </div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-2">
-          <div class="input-group">
-            <span class="input-group-addon">Window: </span>
-            <input id="input_duration" type="text" class="form-control" value="10">
-            <span class="input-group-addon">s</span>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="input-group">
-            <span class="input-group-addon">Data Offset: </span>
-            <input id="input_offset" type="text" class="form-control" value="0">
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="input-group">
-            <span class="input-group-addon">Data Scale: </span>
-            <input id="input_scale" type="text" class="form-control" value="1">
-          </div>
-        </div>
-        <div class="col-md-2">
-          <button id="update_values" type="button" class="btn btn-default">Update</button>
-        </div>
-      </div>
     </div>
-
     <!-- Custom Visualization Code-->
     <!-- We must include the script after the DOM is finished being created-->
     <script src="js/visualization.js"></script>
