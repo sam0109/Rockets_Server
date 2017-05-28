@@ -1,1 +1,81 @@
-<head><meta http-equiv="refresh" content="0; url=thermocouple.html" /> </head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Rockets visualization server">
+    <meta name="author" content="UCLA Rockets Project">
+    <title>Rockets Vizualization</title>
+
+    <!-- jQuery -->
+    <script src="js/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="js/bootstrap.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 80px;
+      }
+      .btn-toggle {
+        color: white;
+        outline: none;
+      }
+      .btn-toggle.active {
+        background-color: grey !important;
+      }
+      .btn-toggle.active, .btn-toggle:active:focus, .btn-toggle.active:focus, .btn-toggle:hover, .btn-toggle:focus {
+        outline: none;
+        color: white;
+      }
+    </style>
+
+    <!-- d3 -->
+    <script src="js/d3.v4.min.js"></script>
+    <script src="js/d3-legend.min.js"></script>
+
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Rockets Visualization</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div id="graph" table="thermocouple"></div>
+        </div>
+        <div class="panel-footer" id="line_info">
+          <div class="row">
+            <div class="col-md-3 col-md-offset-1">
+              <div class="input-group">
+                <span class="input-group-addon">Window: </span>
+                <input id="input_duration" type="text" class="form-control" value="10">
+                <span class="input-group-addon">s</span>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="input-group">
+                <span class="input-group-addon">Time Delay: </span>
+                <input id="input_time_delay" type="text" class="form-control" value="0">
+                <span class="input-group-addon">s</span>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button id="update_values" type="button" class="btn btn-default">Update</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Custom Visualization Code-->
+    <!-- We must include the script after the DOM is finished being created-->
+    <script src="js/visualization.js"></script>
+
+  </body>
+</html>

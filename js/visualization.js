@@ -5,13 +5,18 @@ var paths = [];
 var cols = [];
 var readyForData = false;
 var table = $("#graph").attr("table");
-
 var duration = 10000;
 var margins = {top: 20, right: 20, bottom: 30, left: 50}
 var bb = document.querySelector('#graph').getBoundingClientRect();
 var width = bb.right - bb.left;
 var height = 500;
+var offsets = [];
+var scales = [];
+var time_delay = 0;
+var column_mask = [];
+var line_infos = [];
 
+var line_info_container = d3.select('#line_info');
 var svg = d3.select('#graph')
   .append('svg')
   .attr('class', 'chart')
@@ -57,30 +62,41 @@ var legend = null;
 
 var last_retrieved = null;
 
-
-function update_duration() {
-    var input = document.getElementById("userInputDuration").value;
-    var new_duration = parseInt(input);
-    if(new_duration){
-      duration = new_duration * 1000
-    }
-    else{
-      alert("Not a valid duration");
-    }
-}
+$('#update_values').on('click', function (event) {
+  duration = parseInt(document.getElementById("input_duration").value) * 1000;
+  time_delay = parseFloat(document.getElementById("input_time_delay").value) * 1000;
+  for(var i = 0; i < cols.length; i++){
+    column_mask[i] = !($('#' + cols[i] + "_enabled").hasClass("active"));
+    offsets[i]= parseFloat(document.getElementById(cols[i] + "_offset").value);
+    scales[i] = parseFloat(document.getElementById(cols[i] + "_scale").value);
+  }  
+});
 
 function update_graph(){
   time = (new Date).getTime();
-  x.domain([time - duration, time]);  //TODO: ease instead of constantly redrawing to improve performance
-  var flat_data = [].concat.apply([], data);
-  y.domain(d3.extent(flat_data, function(d) { return Math.max(d); }));
+  x.domain([time - duration + time_delay, time + time_delay]);
+  var flat_data = [];
+  for(var i = 0; i < cols.length; i++){
+    if(column_mask[i]){
+      flat_data = flat_data.concat(data[i].map(function (d) { return (d * scales[i]) + offsets[i] }));
+    }
+  }
+
+  var dom = [0, 0];
+  if(flat_data.length > 0){
+    dom = d3.extent(flat_data);
+  }
+  y.domain(dom);
 
   xAxis.call(d3.axisBottom(x));
   yAxis.call(d3.axisLeft(y));
 
   for(var i = 0; i < cols.length; i++){
-    if(data[i]){
-      paths[i].attr('d', lineFunc(data[i]));
+    if(data[i] && column_mask[i]){
+      paths[i].attr('d', lineFunc(data[i].map(function (d) { return (d * scales[i]) + offsets[i] })));
+    }
+    if(!column_mask[i]){
+      paths[i].attr('d', '');
     }
   }
 }
@@ -99,6 +115,46 @@ xmlHttp.onreadystatechange = function() {
                       .attr('stroke-width', 1)
                       .attr('fill', 'none'));
       data.push([]);
+      line_infos.push(line_info_container.append('div')
+        .attr("class", "row")
+        .append('div'));
+      line_infos[i].append("div")        //note: active means disabled!
+          .attr("class", "col-md-1")
+            .append("button")
+            .attr("id", cols[i] + "_enabled")
+            .attr("type", "button")
+            .attr("class", "btn btn-secondary btn-toggle")
+            .attr("data-toggle", "button")
+            .attr("autocomplete", "off")
+            .style("background-color", colors[i])
+            .text(cols[i]);
+      var input_group_offset = line_infos[i].append("div")
+        .attr("class", "col-md-2")
+          .append("div")
+          .attr("class", "input-group")
+      input_group_offset.append("span")
+          .attr("class", "input-group-addon")
+          .text("Data Offset: ");
+      input_group_offset.append("input")
+          .attr("type", "text")
+          .attr("id", cols[i] + "_offset")
+          .attr("class", "form-control")
+          .attr("value", 0);
+      var input_group_scale = line_infos[i].append("div")
+        .attr("class", "col-md-2")
+          .append("div")
+          .attr("class", "input-group")
+      input_group_scale.append("span")
+          .attr("class", "input-group-addon")
+          .text("Data Scale: ");
+      input_group_scale.append("input")
+          .attr("type", "text")
+          .attr("id", cols[i] + "_scale")
+          .attr("class", "form-control")
+          .attr("value", 1);
+      column_mask.push(true);
+      offsets.push(0);
+      scales.push(1);     
     }
 
     //create the legend
@@ -144,7 +200,7 @@ setInterval(function() {
         });
 
         //remove old timestamps
-        var time_cutoff = (new Date).getTime() - duration;
+        var time_cutoff = (new Date).getTime() - duration + time_delay;
         var index = timestamps.findIndex(function (d) { return d > time_cutoff});
         if(index == -1){
           timestamps = [];
