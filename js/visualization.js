@@ -63,6 +63,7 @@ var legend = null;
 var last_retrieved = null;
 
 $('#update_values').on('click', function (event) {
+  table = parseInt(document.getElementById("input_data").value);
   duration = parseInt(document.getElementById("input_duration").value) * 1000;
   time_delay = parseFloat(document.getElementById("input_time_delay").value) * 1000;
   for(var i = 0; i < cols.length; i++){
