@@ -60,48 +60,26 @@
 
     $sql = "SELECT * FROM " . $table . " WHERE id > " . $id . " LIMIT 10000";
     $queryResult = mysqli_query($conn, $sql);
-
-    $line = "";
-    $timeInterval = 1 / $maxRPS;
-
+    
     $result = null;
     $count = 0;
-
+    $notFirst = FALSE;
+    $timeInterval = 1 / $maxRPS;
+    $time_window_end = null;
+    $most_recent_id = 0;
     while ($row = mysqli_fetch_array($queryResult, MYSQLI_NUM)) {
-
+      $most_recent_id = $row[0];
       if(is_null($result)){
         $result = array_fill(0, count($row) - 1, 0);
+        $time_window_end = $row[1] + $timeInterval;
       }
 
       $count += 1;
       for ($i = 1; $i < count($row); ++$i){
         $result[$i] += $row[$i];
       }
-      $result[0] = $row[0];
-    }
 
-    for ($i = 1; $i < count($result); ++$i){
-      $result[$i] = $result[$i] / $count;
-    }
-    echo implode(",", $result);
-
-    /*
-    $result = null;
-    $count = 0;
-    $notFirst = FALSE;
-    while ($row = mysqli_fetch_array($queryResult, MYSQLI_NUM)) {
-
-      if(is_null($result)){
-        $result = array_fill(0, count($row) - 1, 0);
-        $result[1] = $row[1];
-      }
-
-      $count += 1;
-      for ($i = 2; $i < count($row); ++$i){
-        $result[$i] += $row[$i];
-      }
-
-      if($row[1] >= $result[1] + $timeInterval){
+      if($row[1] >= $time_window_end){
         if($notFirst){
           echo $endl;
         } else{
@@ -109,15 +87,25 @@
         }
 
         $result[0] = $row[0];
-        $result[1] = $row[1];
-        for ($i = 2; $i < count($row); ++$i){
+        for ($i = 1; $i < count($result); ++$i){
           $result[$i] = $result[$i] / $count;
         }
         echo implode(",", $result);
         $result = null;
         $count = 0;
       }
-    }*/
+    }
+    if(!is_null($result)){
+      if($notFirst){
+        echo $endl;
+      }
+
+      $result[0] = $most_recent_id;
+      for ($i = 1; $i < count($result); ++$i){
+        $result[$i] = $result[$i] / $count;
+      }
+      echo implode(",", $result);
+    }
   }
 
   /* INFO MODE QUERY GENERATOR */
