@@ -29,6 +29,9 @@
         outline: none;
         color: white;
       }
+      .top-buffer { 
+        margin-top:20px; 
+      }
     </style>
 
     <!-- d3 -->
@@ -48,11 +51,18 @@
     <div class="container-fluid">
       <div class="panel panel-default">
         <div class="panel-body">
-          <div id="graph" table="thermocouple"></div>
+          <div id="graph"></div>
         </div>
-        <div class="panel-footer" id="line_info">
-          <div class="row">
-            <div class="col-md-3 col-md-offset-1">
+        <div class="panel-footer">
+          
+          <div class="row top-buffer">
+            <div class="col-md-3">
+              <div class="input-group">
+                <span class="input-group-addon">Table: </span>
+                <input id="input_table" type="text" class="form-control" value="">
+              </div>
+            </div>
+            <div class="col-md-3">
               <div class="input-group">
                 <span class="input-group-addon">Data: </span>
                   <select class="form-control" id="input_data">
@@ -79,9 +89,21 @@
               </div>
             </div>
             <div class="col-md-2">
+              <button id="auto_time_delay" type="button" class="btn btn-default">Auto Time Delay</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="container-fluid" id="line_info">
+            </div>
+          </div>
+
+          <div class="row top-buffer">
+            <div class="col-md-2">
               <button id="update_values" type="button" class="btn btn-default">Update</button>
             </div>
           </div>
+
         </div>
       </div>
     </div>
